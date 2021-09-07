@@ -1,0 +1,22 @@
+name: build
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+      options: --privileged
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Linux package
+        uses: ljmf00/build-arch-package@allow-local-sources
+        with:
+          PKGBUILD: $GITHUB_WORKSPACE/trunk/PKGBUILD
+          OUTDIR: $HOME/arch-packages
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-package
+          path: $HOME/arch-packages
